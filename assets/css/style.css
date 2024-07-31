@@ -1,0 +1,568 @@
+@import url('./fonts.css');
+@import url('./variables.css');
+@import url('./utilities.css');
+@import url('./forms.css');
+@import url('../css/pages/configurator.css');
+
+html{
+    scroll-behavior: smooth;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    height: 100%;
+    font-size: 16px;
+}
+
+
+
+.header{
+    padding: 10px 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 99999999;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    
+}
+
+
+
+header nav{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+header nav .menu{
+    font-size: 2rem;
+    color: #fff;
+    width: 40px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+
+
+  .slides-container {
+    position: relative;
+    overflow: hidden;  
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .slide {
+    position: absolute;
+    font-size: 90px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
+  
+    height: 100%;
+    
+    width: calc(100% / 3);
+    width: 100%;
+  }
+  
+  .slides-inner {
+    position: relative;
+    height: 100%;
+    width: 100%;  
+    overflow: hidden;
+  }
+
+  .slides-inner .slide-1{
+    background: linear-gradient(to bottom, rgba(0, 0, 1, 0.718), rgba(0, 0, 1, 0.571)), url(../images/pexels-phil-10681892.jpg) center/cover fixed no-repeat;
+
+  }
+
+  .slides-inner .slide-2{
+    background: linear-gradient(to bottom, rgba(0, 0, 1, 0.718), rgba(0, 0, 1, 0.571)), url(../images/keyvisual2-rodenberg-startseite.jpg) center/cover fixed no-repeat;
+    
+  }
+  .slides-inner .slide-3{
+    background: linear-gradient(to bottom, rgba(0, 0, 1, 0.718), rgba(0, 0, 1, 0.571)), url(../images/pexels-heyho-7587822.jpg) center/cover fixed no-repeat;
+
+  }
+  .slides-inner .slide-4{
+    background: linear-gradient(to bottom, rgba(0, 0, 1, 0.718), rgba(0, 0, 1, 0.571)), url(../images/pexels-landsmann-803094805-19259869.jpg) center/cover fixed no-repeat;
+
+  }
+  .slides-inner .slide-5{
+    background: linear-gradient(to bottom, rgba(0, 0, 1, 0.718), rgba(0, 0, 1, 0.571)), url(../images/pexels-skitterphoto-422844.jpg) center/cover fixed no-repeat;
+
+  }
+  .slides-inner .slide-6{
+    background: linear-gradient(to bottom, rgba(0, 0, 1, 0.718), rgba(0, 0, 1, 0.571)), url(../images/keyvisual2-rodenberg-startseite.jpg) center/cover fixed no-repeat;
+
+  }
+  
+  
+
+nav .nav_menu{
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    list-style-type:none;
+}
+
+nav .nav_menu li a{
+    color: #fff
+}
+
+.nav_sidebar_overlay{
+    position: fixed;
+    background: #f8f8f836;
+    backdrop-filter: blur(20px) !important;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(100%);
+    width: 100%;
+    height: 100vh;
+    z-index: 999999999999999;
+    transition: all 100ms ease-in-out
+}
+
+.nav_sidebar_overlay.show_sidebar{
+    transform: translateX(0%);
+}
+
+.nav_sidebar.show_sidebar{
+    transform: translateX(0%);
+    
+}
+
+nav .nav_sidebar{
+    position: absolute;
+    overflow: auto;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 30%;
+    transform: translateX(100%);
+    background: #000000f7;
+    min-height: 100vh;
+    padding: 24px;
+    transition: all .3s ease-in-out;
+    z-index: 99999;
+
+}
+
+
+
+.nav_sidebar .nav_sidebar-header{
+    padding: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav_sidebar-header button{
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.nav_sidebar-header button svg{
+    
+    color: #fff;
+    width: 30px;
+    font-weight: bold;
+}
+
+.nav_sidebar ul{
+    list-style-type: none;
+    display: grid;
+    gap: 40px;
+    margin-top: 100px;
+}
+
+.nav_sidebar ul li{
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 30px;
+}
+
+.nav_sidebar ul li span svg{
+    color: #fff;
+    width: 20px;
+}
+
+.nav_sidebar ul li a{
+    display: block;
+    font-size: 1rem;
+    color: #fff;
+}
+
+
+header .brand-logo{
+    color: #fff;
+    font-size: 1.5rem;
+    text-decoration: none;
+}
+
+
+
+/* Hero */
+
+.hero{
+    padding: 100px 0;
+    height: 100vh;
+    background: linear-gradient(to bottom, rgba(0, 0, 1, 0.718), rgba(0, 0, 1, 0.571)), url(../images/pexels-phil-10681892.jpg) center/cover fixed no-repeat;
+
+}
+
+.hero .hero_content{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+}
+
+
+
+.hero_content .hero_content-heading h1{
+    color: #fff;
+    font-size: 4rem;
+    /* max-width: 60rem; */
+    line-height: 4.5rem;
+    text-transform: uppercase;
+
+}
+
+.hero_content-heading p{
+    color: #fff;
+    font-size: 1.2rem;
+    margin-top: 10px;
+    text-transform: uppercase;
+}
+
+.hero_content button{
+    margin: 20px auto
+}
+
+.hero_content .hero_intro{
+    color: #fff;
+    font-size: 1.2rem;
+    max-width: 60rem;
+    margin-top: 100px;
+}
+
+/* Service Card */
+
+.service_cards{
+    padding: 100px 0 200px;
+    background: #000;
+}
+
+.service_cards .service_heading{
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.service_cards .service_intro{
+    color: #fff;
+    font-size: 1rem;
+    max-width: 60rem;
+    line-height: 2rem;
+    margin: 20px 0 70px;
+}
+
+.service_cards .cards{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    background: #2a292980;
+    border-radius: 10px;
+    padding: 24px;
+}
+
+.service_cards .cards .card{
+    padding: 15px;
+}
+
+.cards .card img{
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card h4{
+    font-size: 1.3rem;
+    color: #fff;
+    margin: 15px 0 10px;
+}
+
+.card p{
+    font-size: 1rem;
+    color: #aaa;
+    margin: 15px 0 20px;
+}
+
+.product{
+    min-height: 100vh;
+    position: sticky;
+}
+
+.product-1{
+    /* background: rgb(244, 244, 6); */
+    background: #2E4CFA;
+    color: #fff;
+}
+
+.product-2{
+    background: #FEFAEB;
+}
+
+
+
+.product_wrapper{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.product_content{
+    display: grid;
+    place-content: center;
+    padding: 0 20%;
+}
+
+
+.product_content button{
+    place-self: start;
+}
+
+.product_img{
+    overflow: hidden;
+    height: 100vh;
+    width: 100%;
+}
+
+.product_img img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+/* Configurator */
+.configurator{
+    padding: 60rem 0 200px;
+    background: #f8f8f8;
+}
+
+
+footer{
+    background: #000;
+    color: #aaa;
+}
+
+footer .app_name{
+    padding: 30px 0;
+    border-bottom: 1px solid #444;
+}
+
+.footer_grid{
+    display: grid;
+    padding: 30px 0;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+footer .col-2 ul{
+    list-style-type: none;
+    display: grid;
+    gap: 10px;
+}
+
+footer .col-2 ul li a{
+    color: #eee;
+    text-decoration: none;
+    font-size: 1.5rem;
+
+}
+
+footer .col-2 ul li a:hover{
+    color: #aaa;
+}
+
+footer .col-3{
+    display: grid;
+    gap: 20px;
+}
+
+footer .col-3 .top-row ul{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    list-style-type: none;
+    gap: 10px;
+}
+
+footer .col-3 .top-row ul li a{
+    color: #eee;
+    text-decoration: none;
+}
+
+footer .col-3 .top-row ul li a:hover{
+    color: #aaa;
+}
+
+footer .middle-row{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 20px 0;
+    border-top: 1px solid #444;
+    border-bottom: 1px solid #444
+}
+
+.middle-row ul{
+    display: flex;
+    gap: 14px;
+}
+
+footer .bottom-row ul{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    list-style-type: none;
+    gap: 10px;
+}
+
+footer .bottom-row ul li a{
+    color: #eee;
+    text-decoration: none;
+}
+
+footer .bottom-row ul li a:hover{
+    color: #aaa;
+}
+
+footer .footer_credits{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #444;
+    padding: 20px 0;
+
+}
+
+.footer_credits ul{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    list-style-type: none;
+}
+
+.footer_credits ul li a{
+    color: #aaa;
+    text-transform: uppercase;
+    font-size: .95rem;
+}
+
+.footer_credits ul li a:hover{
+    color: #fff;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 1000px) {
+
+    nav .nav_menu{
+        display: none;
+    }
+
+    nav .nav_sidebar{
+        width: 60%;
+    }
+
+    .hero_content .hero_content-heading h1{
+        font-size: 3rem;
+        line-height: 3rem;
+    }
+
+    .hero_content .hero_content-heading p{
+        font-size: 1rem;
+    }
+
+    .service_cards .cards{
+        padding: 10px 5px;
+    }
+
+    .product_wrapper{
+        display: flex;
+        flex-direction: column-reverse;
+        
+    }
+
+    .product_content{
+        padding: 20px 30px 20px;
+    }
+
+    .product_img{
+        height: 50vh;
+    }
+
+    .service_cards .cards{
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+       
+    }
+
+    .footer_grid{
+        grid-template-columns: repeat(2, 1fr);
+        gap: 80px
+    }
+
+    .footer_grid .col-1{
+        grid-column: span 2;
+    }
+}
+
+
+
+@media (max-width: 768px){
+    .footer_grid{
+        display: flex;
+        flex-direction: column;
+        gap: 50px;
+    }
+}
