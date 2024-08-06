@@ -9,4 +9,3 @@ export const handleLoad = (e) => {
 
   window.handleLoad = handleLoad;
 
-

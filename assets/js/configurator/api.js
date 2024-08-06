@@ -327,3 +327,250 @@ export const windowFrames = [
         image: 'assets/images/windows-f/frame-9.webp'
     },
 ]
+
+export const colors = [
+    {
+        id: 0,
+        title: 'color 1',
+        code: '#4F3731',
+    },
+    {
+        id: 1,
+        title: 'color 2',
+        code: '#324035',
+    },
+    {
+        id: 2,
+        title: 'color 3',
+        code: '#742E30',
+    },
+    {
+        id: 3,
+        title: 'color 4',
+        code: '#93949E',
+    },
+    {
+        id: 4,
+        title: 'color 5',
+        code: '#2C3B44',
+    },
+    {
+        id: 5,
+        title: 'color 6',
+        code: '#3F434C',
+    },
+    {
+        id: 6,
+        title: 'color 7',
+        code: '#AD8C4D',
+    },
+    {
+        id: 7,
+        title: 'color 8',
+        code: '#742E31',
+    },
+    {
+        id: 8,
+        title: 'color 9',
+        code: '#324034',
+    },
+    {
+        id: 9,
+        title: 'color 10',
+        code: '#2B4939',
+    },
+]
+
+
+export const decors = [
+    {
+        id: 0,
+        title: 'decor 1',
+        image: 'assets/images/decors/1dbf9eaa-b40f-46fd-8a0c-eabcecf102cc.png',
+        code: ''
+    },
+    {
+        id: 1,
+        title: 'decor 2',
+        image: 'assets/images/decors/6f81c9db-2e8d-4181-85d0-8bb84db0f49dpreview.png',
+        code: ''
+    },
+    {
+        id: 2,
+        title: 'decor 3',
+        image: 'assets/images/decors/26f9cea1-9ff3-41e7-a523-ce288e560047.png',
+        code: ''
+    },
+    {
+        id: 3,
+        title: 'decor 4',
+        image: 'assets/images/decors/88353f78-c383-4efc-a256-aac8f190ef86preview.png',
+        code: ''
+    },
+    {
+        id: 4,
+        title: 'decor 5',
+        image: 'assets/images/decors/a09ec9e1-ff14-46f5-819e-abda42cd2132preview.png',
+        code: ''
+    },
+    {
+        id: 5,
+        title: 'decor 6',
+        image: 'assets/images/decors/b0eac1a8-10fd-4183-8c1a-f82b49b7ffefpreview.png',
+        code: ''
+    },
+    {
+        id: 6,
+        title: 'decor 7',
+        image: 'assets/images/decors/faa86eda-13e8-426e-87ff-c675c3a5b4a6preview.png',
+        code: ''
+    },
+    {
+        id: 7,
+        title: 'decor 8',
+        image: 'assets/images/decors/bd5430b1-a9b5-4686-b6ec-29af8b2fac56preview.png',
+        code: ''
+    },
+    {
+        id: 8,
+        title: 'decor 9',
+        image: 'assets/images/decors/c8f469e1707e46bfb2eae2b54ec03bd3.png',
+        code: ''
+    },
+    {
+        id: 9,
+        title: 'decor 10',
+        image: 'assets/images/decors/e4a83990-9e0c-4314-9eae-778902392795preview.png',
+        code: ''
+    },
+]
+export const handles = [
+    
+    {
+        id:0,
+        title: 'Handles',
+        types: [
+            {
+                id: 0,
+                title: 'handle 1',
+                image: 'assets/images/handles/handles-front/513eebdea1b3368f7c2bfab4.png',
+                code: ''
+            },
+            {
+                id: 1,
+                title: 'handle 2',
+                image: 'assets/images/handles/handles-front/513eebdea1b3368f7c2bfab6.png',
+                code: ''
+            },
+            {
+                id: 2,
+                title: 'handle 3',
+                image: 'assets/images/handles/handles-front/513eebdea1b3368f7c2bfab8.png',
+                code: ''
+            },
+            {
+                id: 3,
+                title: 'handle 4',
+                image: 'assets/images/handles/handles-front/513eebdea1b3368f7c2bfaba.png',
+                code: ''
+            },
+            {
+                id: 4,
+                title: 'handle 5',
+                image: 'assets/images/handles/handles-front/513eebdfa1b3368f7c2bfabc.png',
+                code: ''
+            },
+            {
+                id: 5,
+                title: 'handle 6',
+                image: 'assets/images/handles/handles-front/513eebdfa1b3368f7c2bfabe.png',
+                code: ''
+            },
+            {
+                id: 6,
+                title: 'handle 7',
+                image: 'assets/images/handles/handles-front/513eebdfa1b3368f7c2bfac0.png',
+                code: ''
+            },
+            {
+                id: 7,
+                title: 'handle 8',
+                image: 'assets/images/handles/handles-front/513eebdfa1b3368f7c2bfbd6.png',
+                code: ''
+            },
+        ]
+    },
+    {
+        id: 1,
+        title: 'Inner Ducker',
+        types: [
+            {
+                id: 0,
+                title: '4.130.00 Drücker/Langschild Innen (0784-13-I)',
+                image: 'assets/images/handles/inner-ducker/58baa8894719459ead341916ef7c92cf.png',
+                code: ''
+            }
+        ]
+    },
+    {
+        id: 0,
+        title: 'PZ-Rosette',
+        types: [
+            {
+                id: 0,
+                title: '1',
+                image: 'assets/images/handles/pz-rosette/2d6b76fd713645a586547a7d858b5cfd.png',
+                code: ''
+            },
+            {
+                id: 1,
+                title: '2',
+                image: 'assets/images/handles/pz-rosette/3d45759a1f68405cb46feb78a303e99c.png',
+                code: ''
+            },
+            {
+                id: 2,
+                title: '3',
+                image: 'assets/images/handles/pz-rosette/7e925702eb8543acabcf999afd76a7e3.png',
+                code: ''
+            },
+            {
+                id: 3,
+                title: '4',
+                image: 'assets/images/handles/pz-rosette/513eebdea1b3368f7c2bf9f6.png',
+                code: ''
+            },
+            {
+                id: 4,
+                title: '5',
+                image: 'assets/images/handles/pz-rosette/513eebdea1b3368f7c2bf9f8.png',
+                code: ''
+            },
+            {
+                id: 5,
+                title: '6',
+                image: 'assets/images/handles/pz-rosette/513eebdea1b3368f7c2bfa08.png',
+                code: ''
+            },
+            {
+                id: 6,
+                title: '7',
+                image: 'assets/images/handles/pz-rosette/683f2ca9a7dd43a49972fa5c9f372a39.png',
+                code: ''
+            },
+            {
+                id: 7,
+                title: '8',
+                image: 'assets/images/handles/pz-rosette/5803cbc12019483588b5896f9747e051.png',
+                code: ''
+            },
+            {
+                id: 8,
+                title: '9',
+                image: 'assets/images/handles/pz-rosette/e2f572abdfa04690864566f42f46e371.png',
+                code: ''
+            },
+        ]
+    }
+    
+]

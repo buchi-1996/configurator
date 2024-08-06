@@ -1,4 +1,4 @@
-import { frames, houseFronts, catalogs, glasses, windowFrames } from './api.js';
+import { frames, houseFronts, catalogs, glasses, windowFrames, colors, decors, handles } from './api.js';
 import { handleLoad } from './utils.js';
 
 class App {
@@ -11,6 +11,7 @@ class App {
 
     initializeVariables = () => {
         this.appCurrentMode = 'door';
+        this.currentAppView = 'indoor'
         this.selectedFrameForm = frames[0].form
         this.currentDoorFrame = 0
         this.currentDoorTab = this.selectedFrameForm.indexOf(1); // Index of the currently active tab
@@ -18,10 +19,13 @@ class App {
         this.currentSelectedGlassIndices = [0, 0, 0];
         this.currentSelectedDoorIndices = [0, 0, 0];
         this.currentDoorModel = 0
-        this.currentCatalog = 2
+        this.currentCatalog = 0
         this.currentHouseFront = 0
         this.settingsTitle = ''
         this.currentMenuItem = 0;
+        this.currentColorTab = 0 //color = 0, decor = 1
+        this.DoorColor = { inside: { door: '', frame: '' }, outside: { door: '', frame: '' } }
+
         this.sidebarSettingsModal = document.querySelector('.tools_sidebar')
         this.modalWrapper = document.querySelector('.conf_sidebar_wrapper')
         this.sidebarModalContents = document.querySelector('.tools_sidebar-content')
@@ -112,7 +116,7 @@ class App {
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                                   </svg>                                  
                             </span>
-                            <div class="blurred-img"><img src=${frame.image} onload="handleLoad(event)" loading="lazy" alt=""></div>
+                            <img src=${frame.image}  alt="">
                             <small>${frame.title}</small>
                         </li>`
                 )).join('')}
@@ -166,9 +170,9 @@ class App {
                         </span>`,
                 content: `<div class="catalog-select">
                                 <div class="select-menu">
-                                    <small>Select Catalog</small>
+                                    <small>Select a Catalog</small>
                                     <select>
-                                        ${catalogs.map(cat => (`<option value=${cat.id}>${cat.title}</option>`)).join('')}
+                                        ${catalogs.map((cat, i) => (`<option value=${cat.id} ${i === this.currentCatalog ? 'selected' : ''}>${cat.title}</option>`)).join('')}
                                     </select>
                                 </div>
                                 <div id="tabs">
@@ -206,71 +210,23 @@ class App {
                             </svg>
                         </span>`,
                 content: `<div class="color-contents">
-                 <div class="color-tabs">
-                            <button class="active">
-                                Color
-                            </button>
-                            <button class="">
-                                Decor
-                            </button>
-                        </div>
-                <ul class="colors">
-                        <li class="color">
-                        <span class="selected">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                                  </svg>                                  
-                            </span>
-                            <small>#4F3731</small>
-                        </li>
-                        <li class="color">
-                            <small>#324035</small>
-                        </li>
-                        <li class="color">
-                            <small>#742E30</small>
-                        </li>
-                        <li class="color">
-                            <small>#93949E</small>
-                        </li>
-                        <li class="color">
-                            <small>#2C3B44</small>
-                        </li>
-                        <li class="color">
-                            <small>#3F434C</small>
-                        </li>
-                        <li class="color">
-                            <small>#AD8C4D</small>
-                        </li>
-                        <li class="color">
-                            <small>#742E31</small>
-                        </li>
-                        <li class="color">
-                            <small>#324034</small>
-                        </li>
-                        <li class="color">
-                            <small>#2B4939</small>
-                        </li>
-                     </ul>
+                <div class="view-switch-buttons">
+                    <button data-id="outdoor">Outdoor View</button>
+                    <button data-id="indoor">Indoor View</button>
                 </div>
-                <ul class="catalogs">
-                        ${catalogs.map(catalog => (
-                    `<li class="catalog">
-                        <div class="catalog-header">
-                            <p>${catalog.title}</p>
-                            <span>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                                </svg>
-                            </span>
+                 <div class="color-tabs">
+                            <div class="color-tab-buttons">
+                                <button>
+                                    Color
+                                </button>
+                                <button class="">
+                                    Decor
+                                </button>
+                            </div>
+                            <div class="color-tab-contents"></div>
                         </div>
-                        <ul class="door-types">
-                            ${catalog.models.map(model => (`<li class="door-type">
-                                <img src=${model.image} alt=""> 
-                            </li>`)).join('')}
-                        </ul>
-                        </li>`
-                )).join('')}                    
-                     </ul>`
+                </div>
+                `
             },
             {
                 id: 6,
@@ -280,7 +236,32 @@ class App {
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z" />
                             </svg>
                         </span>`,
-                content: `<p>different door key handles to be displayed</p>`
+                content: `<ul class="accordion-wrap handle-accordion">
+                        ${handles.map(handle => (
+                    `<li class="accordion-content ${handle.title.toLowerCase().replace(/\s+/g, '-')}-content">                          
+                                    <div class="accordion-content-header handle-accordion-header">
+                                        <p>${handle.title}</p>
+                                        <span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                    <ul class="handles">
+                                        ${handle.types.map((type) => (`
+                                            <li class='handle'>
+                                                <span class="selected">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                                    </svg>                                  
+                                                </span>
+                                                <img src=${type.image} alt=${type.title} >
+                                                <small>${type.title}</small>
+                                            </li>`)).join('')}
+                                    </ul>
+                                </li> `
+                )).join('')}
+                     </ul>`
             },
             {
                 id: 7,
@@ -290,7 +271,38 @@ class App {
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 0 0 2.25-2.25V6a2.25 2.25 0 0 0-2.25-2.25H6A2.25 2.25 0 0 0 3.75 6v2.25A2.25 2.25 0 0 0 6 10.5Zm0 9.75h2.25A2.25 2.25 0 0 0 10.5 18v-2.25a2.25 2.25 0 0 0-2.25-2.25H6a2.25 2.25 0 0 0-2.25 2.25V18A2.25 2.25 0 0 0 6 20.25Zm9.75-9.75H18a2.25 2.25 0 0 0 2.25-2.25V6A2.25 2.25 0 0 0 18 3.75h-2.25A2.25 2.25 0 0 0 13.5 6v2.25a2.25 2.25 0 0 0 2.25 2.25Z" />
                             </svg>
                         </span>`,
-                content: `<p>more settings options</p>`
+                content: `<div class="options">
+                        <div class="view-switch-buttons">
+                            <button data-id="outdoor">Outdoor View</button>
+                            <button data-id="indoor">Indoor View</button>
+                        </div>
+                        <ul class="accordion-wrap handle-accordion">
+                        ${handles.map(handle => (
+                    `<li class="accordion-content ${handle.title.toLowerCase().replace(/\s+/g, '-')}-content">                          
+                                    <div class="accordion-content-header handle-accordion-header">
+                                        <p>${handle.title}</p>
+                                        <span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                    <ul class="handles">
+                                        ${handle.types.map((type) => (`
+                                            <li class='handle'>
+                                                <span class="selected">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                                    </svg>                                  
+                                                </span>
+                                                <img src=${type.image} alt=${type.title} >
+                                                <small>${type.title}</small>
+                                            </li>`)).join('')}
+                                    </ul>
+                                </li> `
+                )).join('')}
+                     </ul>
+                </div>`
             },
             {
                 id: 8,
@@ -383,7 +395,7 @@ class App {
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                                   </svg>                                  
                             </span>
-                            <div class="blurred-img"><img src=${frame.image} onload="handleLoad(event)" loading="lazy" alt=""></div>
+                           <div class="blurred-img"><img src=${frame.image} onload="handleLoad(event)" loading="lazy" alt=""></div>
                             <small>${frame.title}</small>
                         </li>`
                 )).join('')}
@@ -509,7 +521,7 @@ class App {
                         </form>
                     </div>`
             },
-            
+
         ]
 
     }
@@ -660,6 +672,53 @@ class App {
             });
         });
     };
+
+    // Switch door view 
+    RotateAppView = () => {
+        const switchBtnsDesktop = document.querySelectorAll('.tools_sidebar-content .view-switch-buttons button');
+        const switchBtnsMobile = document.querySelectorAll('.mobile_tools-bar .view-switch-buttons button');
+
+        if (this.currentAppView.toLowerCase() === 'outdoor') {
+            switchBtnsDesktop[0].classList.add('active')
+            switchBtnsMobile[0].classList.add('active')
+        } else if (this.currentAppView.toLowerCase() === 'indoor') {
+            switchBtnsDesktop[1].classList.add('active')
+            switchBtnsMobile[1].classList.add('active')
+        }
+
+        const handleButtonSwitch = (btn, index, btnQuery) => {
+            btn.addEventListener('click', () => {
+                switchBtnsDesktop.forEach(btn => btn.classList.remove('active'))
+                switchBtnsMobile.forEach(btn => btn.classList.remove('active'))
+
+                btn.classList.add('active')
+                btnQuery[index].classList.add('active')
+
+                if (btn.dataset.id === 'outdoor') {
+                    if (this.currentAppView.toLowerCase() === 'outdoor') return;
+                    this.currentAppView = 'outdoor'
+                    // rotate to show outdoor view
+                    alert('switched to outdoor mode')
+                }
+
+                if (btn.dataset.id === 'indoor') {
+                    if (this.currentAppView.toLowerCase() === 'indoor') return;
+                    this.currentAppView = 'indoor'
+                    // rotate to show indoor view
+                    alert('switched to indoor mode')
+                }
+            })
+        }
+        switchBtnsDesktop.forEach((btn, index) => {
+            handleButtonSwitch(btn, index, switchBtnsMobile)
+        })
+
+        switchBtnsMobile.forEach((btn, index) => {
+            handleButtonSwitch(btn, index, switchBtnsDesktop)
+        })
+
+
+    }
 
 
     loadActiveStates = () => {
@@ -961,24 +1020,29 @@ class App {
         this.handleDoorFrameSelection()
         this.handleCatalogTabs(this.selectedFrameForm)
         this.handleGlassTabs(this.selectedFrameForm)
+        this.handleColorsSection()
+        this.handleKeyHandleSelection()
+        this.handleOptionsSelection()
     }
 
 
 
-    
 
 
-   handleCatalogTabs = (form) => {
-    if (this.sidebarModalContents && this.sidebarModalContents.firstElementChild &&
-        this.sidebarModalContents.firstElementChild.classList.contains('catalog-select')) {
 
-        const loadTabContent = (itemType) => {
-            const tabContent = document.querySelector('.tab-content');
-            tabContent.innerHTML = '';
+    handleCatalogTabs = (form) => {
+        if (this.settingsTitle.toLowerCase() === 'catalog') {
 
-            const content = itemType === 0 ? '' : (`<ul class="door_model-images">
+            const tabButtons = document.querySelectorAll('.tab-buttons');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            const loadTabContent = (itemType) => {
+                tabContents.forEach(tabContent => {
+                    tabContent.innerHTML = '';
+
+                    const content = itemType === 0 ? '' : (`<ul class="door_model-images">
                        ${catalogs[this.currentCatalog].models.map((model, index) => (
-                `<li class="door_model-image ${this.currentSelectedDoorIndices[this.currentDoorTab] === index ? 'active' : ''}">
+                        `<li class="door_model-image ${this.currentSelectedDoorIndices[this.currentDoorTab] === index ? 'active' : ''}">
                                 <span class="selected">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
@@ -987,192 +1051,680 @@ class App {
                                 <div class="blurred-img"><img src=${model.image} onload="handleLoad(event)" loading="lazy" alt=""></div>
                                 <small>${model.modelNumber}</small>
                             </li>`
-            )).join('')}
+                    )).join('')}
                         </ul>`);
-            tabContent.innerHTML = `${content}`;
+                    tabContent.innerHTML = `${content}`;
 
-            const allModels = document.querySelectorAll('.door_model-images .door_model-image');
-            allModels.forEach((model, index) => {
-                model.addEventListener('click', () => {
-                    this.currentSelectedDoorIndices[this.currentDoorTab] = index;
-                    allModels.forEach(model => model.classList.remove('active'));
-                    allModels[this.currentSelectedDoorIndices[this.currentDoorTab]].classList.add('active');
+                    const allModels = tabContent.querySelectorAll('.door_model-images .door_model-image');
+                    allModels.forEach((model, index) => {
+                        model.addEventListener('click', () => {
+                            this.currentSelectedDoorIndices[this.currentDoorTab] = index;
+                            allModels.forEach(model => model.classList.remove('active'));
+                            allModels[this.currentSelectedDoorIndices[this.currentDoorTab]].classList.add('active');
 
-                    // call your update func here
-                });
-            });
-        }
-
-        const tabButtons = document.querySelector('.tab-buttons');
-        const tabContent = document.querySelector('.tab-content');
-        const catalogSelect = document.querySelector('.select-menu select');
-
-        catalogSelect.addEventListener('change', (e)=> {
-            console.log(e.target.value)
-            const currentCat = +e.target.value;
-            this.currentCatalog = currentCat
-            console.log(this.currentCatalog);
-            this.getCurrentToolsBarContent()
-        })
-
-        console.log(catalogSelect)
-        tabContent.innerHTML = '';
-
-        if (form.length > 1) {
-    
-        tabButtons.innerHTML = '';
-
-        let firstDoorTabButton = null;
-
-        form.forEach((item, index) => {
-            if (this.currentMenuItem === 3 && item === 0) {
-                // Skip creating tab buttons for Right Panel and Left Panel
-                return;
-            }
-
-            const tabButton = document.createElement('button');
-            if (item === 0) {
-                tabButton.innerText = index === 0 ? 'Left Panel' : 'Right Panel';
-            } else {
-                tabButton.innerText = 'Door';
-                if (!firstDoorTabButton) {
-                    firstDoorTabButton = tabButton;
-                }
-            }
-
-            tabButton.addEventListener('click', () => {
-                document.querySelectorAll('.tab-buttons button').forEach((btn) => {
-                    btn.classList.remove('active');
-                });
-                tabButton.classList.add('active');
-                this.currentDoorTab = index;
-                loadTabContent(item);
-                console.log(this.currentSelectedDoorIndices);
-            });
-            tabButtons.appendChild(tabButton);
-        });
-
-        // Set the first "Door" tab as active by default
-        if (firstDoorTabButton) {
-            firstDoorTabButton.classList.add('active');
-            this.currentDoorTab = this.selectedFrameForm.indexOf(1); // Initialize the current tab correctly
-            loadTabContent(1); // Load "Door" content by default
-        }
-    }else{
-        tabButtons.style.display = 'none';
-            // Set the default tab content when there's no tab button
-         loadTabContent(form[0]);
-        }
-    }
-}
-
-    
-    
-
-handleGlassTabs = (form) => {
-    if (this.sidebarModalContents && this.sidebarModalContents.firstElementChild &&
-        this.sidebarModalContents.firstElementChild.classList.contains('glass-select')) {
-
-        const loadTabContent = (itemType) => {
-            const tabContent = document.querySelector('.tab-content');
-            tabContent.innerHTML = '';
-
-            const content = itemType === 0 ? (`
-                    <ul class="door_glasses-images">
-                        ${glasses.map((glass, index) => (
-                            `<li class="door_glasses-image ${this.currentSelectedGlassIndices[this.currentGlassTab] === index ? 'active' : ''}">
-                                <span class="selected">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                                    </svg>                                  
-                                </span>
-                                <div class="blurred-img"><img src=${glass.image} onload="handleLoad(event)" loading="lazy" alt=""></div>
-                                <small>${glass.title}</small>
-                            </li>`
-                        )).join('')}
-                    </ul>
-                `) : (`
-                    <ul class="door_glasses-images">
-                        ${glasses.map((glass, index) => (
-                            `<li class="door_glasses-image ${this.currentSelectedGlassIndices[this.currentGlassTab] === index ? 'active' : ''}">
-                                <span class="selected">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                                    </svg>                                  
-                                </span>
-                                <div class="blurred-img"><img src=${glass.image} onload="handleLoad(event)" loading="lazy" alt=""></div>
-                                <small>${glass.title}</small>
-                            </li>`
-                        )).join('')}
-                    </ul>
-                `);
-
-            tabContent.innerHTML = `${content}`;
-
-            const allGlasses = document.querySelectorAll('.door_glasses-images .door_glasses-image');
-            allGlasses.forEach((glass, index) => {
-                glass.addEventListener('click', () => {
-                    this.currentSelectedGlassIndices[this.currentGlassTab] = index;
-                    allGlasses.forEach(glass => glass.classList.remove('active'));
-                    allGlasses[this.currentSelectedGlassIndices[this.currentGlassTab]].classList.add('active');
-                });
-            });
-        }
-
-        const tabButtons = document.querySelector('.tab-buttons');
-        const tabContent = document.querySelector('.tab-content');
-        tabContent.innerHTML = '';
-
-        if (form.length > 1) {
-            tabButtons.innerHTML = '';
-            let firstDoorTabButton = null;
-
-            form.forEach((item, index) => {
-                if (this.currentMenuItem === 3 && item === 0) {
-                    // Skip creating tab buttons for Right Panel and Left Panel
-                    return;
-                }
-
-                const tabButton = document.createElement('button');
-                if (item === 0) {
-                    tabButton.innerText = index === 0 ? 'Left Panel' : 'Right Panel';
-                } else {
-                    tabButton.innerText = 'Door';
-                    if (!firstDoorTabButton) {
-                        firstDoorTabButton = tabButton;
-                    }
-                }
-
-                tabButton.addEventListener('click', () => {
-                    document.querySelectorAll('.tab-buttons button').forEach((btn) => {
-                        btn.classList.remove('active');
+                            // call your update func here
+                        });
                     });
-                    tabButton.classList.add('active');
-                    this.currentGlassTab = index;
-                    loadTabContent(item);
-                    console.log(this.currentSelectedGlassIndices);
                 });
-                tabButtons.appendChild(tabButton);
+            }
+
+            const catalogSelect = document.querySelectorAll('.select-menu select');
+            const updateSelectedCatalog = () => {
+                this.doorItemMenus[3].content = `<div class="catalog-select">
+                                            <div class="select-menu">
+                                                <small>Select a Catalog</small>
+                                                <select>
+                                                    ${catalogs.map((cat, i) => (`<option value=${cat.id} ${i === this.currentCatalog ? 'selected' : ''}>${cat.title}</option>`)).join('')}
+                                                </select>
+                                            </div>
+                                            <div id="tabs">
+                                                <div class="tab-buttons"></div>
+                                                <div class="tab-content"></div>
+                                            </div>
+                                    </div>`
+
+            }
+
+            const handleCatalogSelect = (e) => {
+                // Update the current catalog and perform necessary updates
+                this.currentCatalog = +e.target.value;
+                updateSelectedCatalog();
+                this.getCurrentToolsBarContent();
+                console.log(e.target.value);
+
+                // After handling the event, remove the event listener
+                catalogSelect.forEach(cat => {
+                    cat.removeEventListener('change', handleCatalogSelect);
+                });
+            };
+
+            // Attach the event listener
+            catalogSelect.forEach((cat) => {
+                cat.addEventListener('change', handleCatalogSelect);
             });
 
-            // Set the first "Door" tab as active by default
-            if (firstDoorTabButton) {
-                firstDoorTabButton.classList.add('active');
-                this.currentGlassTab = this.selectedFrameForm.indexOf(1); // Initialize the current tab correctly
-                loadTabContent(1); // Load "Door" content by default
+
+            if (form.length > 1) {
+
+                tabButtons.forEach(tabButtonContainer => {
+                    tabButtonContainer.innerHTML = '';
+
+                    let firstDoorTabButton = null;
+
+                    // Draw Tab Buttons
+                    form.forEach((item, index) => {
+                        if (this.currentMenuItem === 3 && item === 0) {
+                            // Skip creating tab buttons for Right Panel and Left Panel
+                            return;
+                        }
+
+                        const tabButton = document.createElement('button');
+                        if (item === 0) {
+                            tabButton.innerText = index === 0 ? 'Left Panel' : 'Right Panel';
+                        } else {
+                            tabButton.innerText = 'Door';
+                            if (!firstDoorTabButton) {
+                                firstDoorTabButton = tabButton;
+                            }
+                        }
+
+                        tabButton.addEventListener('click', () => {
+                            document.querySelectorAll('.tab-buttons button').forEach((btn) => {
+                                btn.classList.remove('active');
+                            });
+                            tabButton.classList.add('active');
+                            this.currentDoorTab = index;
+                            loadTabContent(item);
+                            console.log(this.currentSelectedDoorIndices);
+                        });
+                        tabButtonContainer.appendChild(tabButton);
+                    });
+
+                    // Set the first "Door" tab as active by default
+                    if (firstDoorTabButton) {
+                        firstDoorTabButton.classList.add('active');
+                        this.currentDoorTab = this.selectedFrameForm.indexOf(1); // Initialize the current tab correctly
+                        loadTabContent(1); // Load "Door" content by default
+                    }
+                });
+
+            } else {
+                tabButtons.forEach(tabButtonContainer => {
+                    tabButtonContainer.style.display = 'none';
+                });
+                // Set the default tab content when there's no tab button
+                loadTabContent(form[0]);
             }
-        } else {
-            tabButtons.style.display = 'none';
-            // Set the default tab content when there's no tab button
-            loadTabContent(form[0]);
         }
     }
-}
-
-    
 
 
 
+
+
+    handleGlassTabs = (form) => {
+        if (this.settingsTitle.toLowerCase() === 'glasses') {
+
+            const tabContents = document.querySelectorAll('.tab-content');
+            const tabButtons = document.querySelectorAll('.tab-buttons');
+
+            const loadTabContent = (itemType) => {
+                tabContents.forEach(tabContent => {
+                    tabContent.innerHTML = '';
+
+                    const content = itemType === 0 ? (`
+                        <ul class="door_glasses-images">
+                            ${glasses.map((glass, index) => (
+                        `<li class="door_glasses-image ${this.currentSelectedGlassIndices[this.currentGlassTab] === index ? 'active' : ''}">
+                                    <span class="selected">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                        </svg>                                  
+                                    </span>
+                                    <div class="blurred-img"><img src=${glass.image} onload="handleLoad(event)" loading="lazy" alt=""></div>
+                                    <small>${glass.title}</small>
+                                </li>`
+                    )).join('')}
+                        </ul>
+                    `) : (`
+                        <ul class="door_glasses-images">
+                            ${glasses.map((glass, index) => (
+                        `<li class="door_glasses-image ${this.currentSelectedGlassIndices[this.currentGlassTab] === index ? 'active' : ''}">
+                                    <span class="selected">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                        </svg>                                  
+                                    </span>
+                                    <div class="blurred-img"><img src=${glass.image} onload="handleLoad(event)" loading="lazy" alt=""></div>
+                                    <small>${glass.title}</small>
+                                </li>`
+                    )).join('')}
+                        </ul>
+                    `);
+
+                    tabContent.innerHTML = `${content}`;
+
+                    const allGlasses = tabContent.querySelectorAll('.door_glasses-images .door_glasses-image');
+                    allGlasses.forEach((glass, index) => {
+                        glass.addEventListener('click', () => {
+                            this.currentSelectedGlassIndices[this.currentGlassTab] = index;
+                            allGlasses.forEach(glass => glass.classList.remove('active'));
+                            allGlasses[this.currentSelectedGlassIndices[this.currentGlassTab]].classList.add('active');
+                        });
+                    });
+                });
+            }
+
+            if (form.length > 1) {
+                tabButtons.forEach(tabButtonContainer => {
+                    tabButtonContainer.innerHTML = '';
+                    let firstDoorTabButton = null;
+
+                    form.forEach((item, index) => {
+                        const tabButton = document.createElement('button');
+                        if (item === 0) {
+                            tabButton.innerText = index === 0 ? 'Left Panel' : 'Right Panel';
+                        } else {
+                            tabButton.innerText = 'Door';
+                            if (!firstDoorTabButton) {
+                                firstDoorTabButton = tabButton;
+                            }
+                        }
+
+                        tabButton.addEventListener('click', () => {
+                            document.querySelectorAll('.tab-buttons button').forEach((btn) => {
+                                btn.classList.remove('active');
+                            });
+                            tabButton.classList.add('active');
+                            this.currentGlassTab = index;
+                            loadTabContent(item);
+                            console.log(this.currentSelectedGlassIndices);
+                        });
+                        tabButtonContainer.appendChild(tabButton);
+                    });
+
+                    // Set the first "Door" tab as active by default
+                    if (firstDoorTabButton) {
+                        firstDoorTabButton.classList.add('active');
+                        this.currentGlassTab = this.selectedFrameForm.indexOf(1); // Initialize the current tab correctly
+                        loadTabContent(1); // Load "Door" content by default
+                    }
+                });
+            } else {
+                tabButtons.forEach(tabButtonContainer => {
+                    tabButtonContainer.style.display = 'none';
+                });
+                // Set the default tab content when there's no tab button
+                loadTabContent(form[0]);
+            }
+        }
+    }
+
+
+
+
+    handleColorsSection = () => {
+        if (this.settingsTitle.toLowerCase() === 'colors') {
+            const tabButtonsDesktop = document.querySelectorAll('.tools_sidebar-content .color-tab-buttons button');
+            const tabContentsDesktop = document.querySelectorAll('.tools_sidebar-content .color-tab-contents');
+
+            const tabButtonsMobile = document.querySelectorAll('.mobile_tools-bar .color-tab-buttons button');
+            const tabContentsMobile = document.querySelectorAll('.mobile_tools-bar .color-tab-contents');
+
+
+
+            const loadTabContent = (itemType) => {
+                if (tabButtonsDesktop.length > 0 && tabContentsDesktop.length > 0) {
+                    tabContentsDesktop.forEach(tabContent => {
+                        tabContent.innerHTML = '';
+
+                        const content = itemType === 0 ? (`
+                            <ul class="color-tab-content">
+                                <li class="color-content">
+                                    <div class="color-content-header">
+                                        <p>Door color</p>
+                                        <span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                    <ul class="colors door-colors">
+                                        ${colors.map(color => (`
+                                            <li class="color" style="background: ${color.code}">
+                                                <span class="selected">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                                    </svg>                                  
+                                                </span>
+                                                <small>${color.code}</small>
+                                            </li>`)).join('')}
+                                    </ul>
+                                </li>                  
+                                <li class="color-content">
+                                    <div class="color-content-header">
+                                        <p>Frame color</p>
+                                        <span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                    <ul class="colors frame-colors">
+                                        ${colors.map(color => (`
+                                            <li class="color" style="background: ${color.code}">
+                                                <span class="selected">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                                    </svg>                                  
+                                                </span>
+                                                <small>${color.code}</small>
+                                            </li>`)).join('')}
+                                    </ul>
+                                </li>                                    
+                             </ul>`) : (`
+                             <ul class="color-tab-content decor-tab-content">
+                                <li class="color-content decor-content">
+                                    <div class="color-content-header decor-content-header">
+                                        <p>Door decor</p>
+                                        <span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                    <ul class="decors door-decors">
+                                        ${decors.map(decor => (`
+                                            <li class="decor">
+                                                <span class="selected">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                                    </svg>                                  
+                                                </span>
+                                                <img src=${decor.image} alt=${decor.title} >
+                                            </li>`)).join('')}
+                                    </ul>
+                                </li>                  
+                                <li class="color-content">
+                                    <div class="color-content-header">
+                                        <p>Frame decor</p>
+                                        <span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                    <ul class="decors frame-decors">
+                                        ${decors.map(decor => (`
+                                            <li class="decor">
+                                                <span class="selected">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                                    </svg>                                  
+                                                </span>
+                                                <img src=${decor.image} alt=${decor.title} >
+                                            </li>`)).join('')}
+                                    </ul>
+                                </li>                                    
+                             </ul>`);
+
+                        tabContent.innerHTML = `${content}`;
+                    });
+                }
+
+                if (tabButtonsMobile.length > 0 && tabContentsMobile.length > 0) {
+                    tabContentsMobile.forEach(tabContent => {
+                        tabContent.innerHTML = '';
+
+                        const content = itemType === 0 ? (`
+                            <ul class="color-tab-content">
+                                <li class="color-content">
+                                    <div class="color-content-header">
+                                        <p>Door color</p>
+                                        <span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                    <ul class="colors door-colors">
+                                        ${colors.map(color => (`
+                                            <li class="color" style="background: ${color.code}">
+                                                <span class="selected">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                                    </svg>                                  
+                                                </span>
+                                                <small>${color.code}</small>
+                                            </li>`)).join('')}
+                                    </ul>
+                                </li>                  
+                                <li class="color-content">
+                                    <div class="color-content-header">
+                                        <p>Frame color</p>
+                                        <span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                    <ul class="colors frame-colors">
+                                        ${colors.map(color => (`
+                                            <li class="color" style="background: ${color.code}">
+                                                <span class="selected">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                                    </svg>                                  
+                                                </span>
+                                                <small>${color.code}</small>
+                                            </li>`)).join('')}
+                                    </ul>
+                                </li>                                    
+                             </ul>`) : (`
+                             <ul class="color-tab-content decor-tab-content">
+                                <li class="color-content decor-content">
+                                    <div class="color-content-header decor-content-header">
+                                        <p>Door decor</p>
+                                        <span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                    <ul class="decors door-decors">
+                                        ${decors.map(decor => (`
+                                            <li class="decor">
+                                                <span class="selected">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                                    </svg>                                  
+                                                </span>
+                                                <img src=${decor.image} alt=${decor.title} >
+                                            </li>`)).join('')}
+                                    </ul>
+                                </li>                  
+                                <li class="color-content">
+                                    <div class="color-content-header">
+                                        <p>Frame decor</p>
+                                        <span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                    <ul class="decors frame-decors">
+                                        ${decors.map(decor => (`
+                                            <li class="decor">
+                                                <span class="selected">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                                    </svg>                                  
+                                                </span>
+                                                <img src=${decor.image} alt=${decor.title} >
+                                            </li>`)).join('')}
+                                    </ul>
+                                </li>                                    
+                             </ul>`);
+
+                        tabContent.innerHTML = `${content}`;
+                    });
+                }
+            };
+
+
+            const handleTabButtonChange = (button, index) => {
+                console.log('loaded');
+                tabButtonsDesktop.forEach(btn => btn.classList.remove('active'));
+                tabButtonsMobile.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                this.currentColorTab = index;
+                loadTabContent(this.currentColorTab);
+                toggleAccordion();
+                this.getCurrentToolsBarContent();
+
+                // Remove event listeners before adding new ones
+                tabButtonsDesktop.forEach((button) => {
+                    button.removeEventListener('click', handleDesktopClick);
+                });
+                tabButtonsMobile.forEach((button) => {
+                    button.removeEventListener('click', handleMobileClick);
+                });
+
+
+            };
+
+            // Define event handler functions
+            const handleDesktopClick = (e) => {
+                const button = e.target;
+                const index = Array.from(tabButtonsDesktop).indexOf(button);
+                handleTabButtonChange(button, index);
+            };
+
+            const handleMobileClick = (e) => {
+                const button = e.target;
+                const index = Array.from(tabButtonsMobile).indexOf(button);
+                handleTabButtonChange(button, index);
+            };
+
+
+
+            // Add event listeners
+            tabButtonsDesktop.forEach((button) => {
+                tabButtonsDesktop[this.currentColorTab].classList.add('active');
+                tabButtonsMobile[this.currentColorTab].classList.add('active');
+                button.addEventListener('click', handleDesktopClick);
+            });
+
+
+            tabButtonsMobile.forEach((button) => {
+                tabButtonsDesktop[this.currentColorTab]?.classList.add('active');
+                tabButtonsMobile[this.currentColorTab]?.classList.add('active');
+                button.addEventListener('click', handleMobileClick);
+            });
+
+
+            // Handle click on colors to set door or frame color
+            const handleDoorColorClick = () => {
+                const colorButtons = document.querySelectorAll('.door-colors .color')
+                colorButtons.forEach(color => {
+                    colorButtons[0].classList.add('active')
+                    color.addEventListener('click', () => {
+                        colorButtons.forEach(btn => btn.classList.remove('active'))
+                        color.classList.add('active')
+                        // set the door color
+                    })
+                })
+            }
+
+            // Handle Door Frame Click
+            const handleFrameColorClick = () => {
+                const colorButtons = document.querySelectorAll('.frame-colors .color')
+                colorButtons.forEach(color => {
+                    colorButtons[0].classList.add('active')
+                    color.addEventListener('click', () => {
+                        colorButtons.forEach(btn => btn.classList.remove('active'))
+                        color.classList.add('active')
+                        // set the door frame color
+                    })
+                })
+            }
+            // Handle Decor Color Click
+            const handleDoorDecorClick = () => {
+                const decorButtons = document.querySelectorAll('.door-decors .decor')
+                decorButtons.forEach(decor => {
+                    decorButtons[0].classList.add('active')
+                    decor.addEventListener('click', () => {
+                        decorButtons.forEach(btn => btn.classList.remove('active'))
+                        decor.classList.add('active')
+                        // set the door decor
+                    })
+                })
+            }
+            // Handle Decor frame Click
+            const handleFrameDecorClick = () => {
+                const decorButtons = document.querySelectorAll('.frame-decors .decor')
+                decorButtons.forEach(decor => {
+                    decorButtons[0].classList.add('active')
+                    decor.addEventListener('click', () => {
+                        decorButtons.forEach(btn => btn.classList.remove('active'))
+                        decor.classList.add('active')
+                        // set the frame decor
+                    })
+                })
+            }
+
+            const toggleAccordion = () => {
+                const accordionWrapper = document.querySelectorAll('.color-content');
+                const accordionButton = document.querySelectorAll('.color-content-header');
+                const headerSvg = document.querySelectorAll('.color-content-header span svg');
+
+                accordionButton.forEach((btn, index) => {
+                    btn.addEventListener('click', () => {
+                        // Close all other accordions
+                        accordionWrapper.forEach((item, i) => {
+                            if (i !== index) {
+                                item.classList.remove('open');
+                            }
+                        });
+                        headerSvg.forEach((item, i) => {
+                            if (i !== index) {
+                                item.classList.remove('open');
+                            }
+                        });
+
+                        // Toggle the clicked accordion
+                        accordionWrapper[index].classList.toggle('open');
+                        headerSvg[index].classList.toggle('open');
+                    });
+                });
+            };
+
+            loadTabContent(this.currentColorTab);
+            toggleAccordion();
+            handleDoorColorClick()
+            handleFrameColorClick()
+            handleDoorDecorClick()
+            handleFrameDecorClick()
+            this.RotateAppView()
+        }
+    };
+
+
+
+
+    handleKeyHandleSelection = () => {
+        if (this.settingsTitle.toLowerCase() === 'handles') {
+
+
+            const toggleAccordion = () => {
+                const accordionWrapper = document.querySelectorAll('.accordion-content');
+                const accordionButton = document.querySelectorAll('.accordion-content-header');
+                const headerSvg = document.querySelectorAll('.accordion-content-header span svg');
+
+                accordionButton.forEach((btn, index) => {
+                    btn.addEventListener('click', () => {
+                        // Close all other accordions
+                        accordionWrapper.forEach((item, i) => {
+                            if (i !== index) {
+                                item.classList.remove('open');
+                            }
+                        });
+                        headerSvg.forEach((item, i) => {
+                            if (i !== index) {
+                                item.classList.remove('open');
+                            }
+                        });
+
+                        // Toggle the clicked accordion
+                        accordionWrapper[index].classList.toggle('open');
+                        headerSvg[index].classList.toggle('open');
+                    });
+                });
+            };
+
+
+
+
+            const handleItemsClick = () => {
+                const handleButtons = document.querySelectorAll('.handles-content .handle')
+                handleButtons.forEach(handle => {
+                    handleButtons[0].classList.add('active')
+                    handle.addEventListener('click', () => {
+                        handleButtons.forEach(btn => btn.classList.remove('active'))
+                        handle.classList.add('active')
+                        // set the door handle
+                    })
+                })
+            }
+
+            const innerDruckerItemsClick = () => {
+                const handleButtons = document.querySelectorAll('.inner-ducker-content .handle')
+                handleButtons.forEach(handle => {
+                    handleButtons[0].classList.add('active')
+                    handle.addEventListener('click', () => {
+                        handleButtons.forEach(btn => btn.classList.remove('active'))
+                        handle.classList.add('active')
+                        // set 
+                    })
+                })
+            }
+
+            const pzRosetteItemsClick = () => {
+                const handleButtons = document.querySelectorAll('.pz-rosette-content .handle')
+                handleButtons.forEach(handle => {
+                    handleButtons[0].classList.add('active')
+                    handle.addEventListener('click', () => {
+                        handleButtons.forEach(btn => btn.classList.remove('active'))
+                        handle.classList.add('active')
+                        // set 
+                    })
+                })
+            }
+
+            toggleAccordion()
+            handleItemsClick()
+            innerDruckerItemsClick()
+            pzRosetteItemsClick()
+        }
+    }
+
+
+
+    handleOptionsSelection = () => {
+        if (this.settingsTitle.toLowerCase() === 'options') {
+
+
+            const toggleAccordion = () => {
+                const accordionWrapper = document.querySelectorAll('.accordion-content');
+                const accordionButton = document.querySelectorAll('.accordion-content-header');
+                const headerSvg = document.querySelectorAll('.accordion-content-header span svg');
+
+                accordionButton.forEach((btn, index) => {
+                    btn.addEventListener('click', () => {
+                        // Close all other accordions
+                        accordionWrapper.forEach((item, i) => {
+                            if (i !== index) {
+                                item.classList.remove('open');
+                            }
+                        });
+                        headerSvg.forEach((item, i) => {
+                            if (i !== index) {
+                                item.classList.remove('open');
+                            }
+                        });
+
+                        // Toggle the clicked accordion
+                        accordionWrapper[index].classList.toggle('open');
+                        headerSvg[index].classList.toggle('open');
+                    });
+                });
+            };
+
+            this.RotateAppView()
+            toggleAccordion()
+        }
+    }
 
 
 
