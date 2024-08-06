@@ -532,12 +532,12 @@ class App {
         this.setAppMode()
         this.displayMenuItems()
         this.handleDynamicMenuButtonClick()
-        this.showSettingsModal('Door Frame', 0)
-        this.showMobileSettingsModal('Door Frame', 0)
-        this.modalWrapper.classList.add('showModal')
+        // this.showSettingsModal('House Front', 0)
+        this.showMobileSettingsModal('House Front', 0)
+        // this.modalWrapper.classList.add('showModal')
         this.getCurrentToolsBarContent()
         // set menu active state onload for both desktop and mobile
-        this.loadActiveStates()
+        // this.loadActiveStates()
     }
 
 
